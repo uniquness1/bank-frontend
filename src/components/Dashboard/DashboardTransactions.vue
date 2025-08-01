@@ -57,9 +57,9 @@
               </h4>
               <p class="text-sm text-gray-600">
                 {{ tx.mode === 'CREDIT' ? 'From:' : 'To:' }}
-                <span class="text-xs sm:text-base md:text-xl font-medium" v-if="tx.mode === 'CREDIT'">{{
+                <span class="text-xs sm:text-sm font-medium" v-if="tx.mode === 'CREDIT'">{{
                   tx.senderName || 'Unknown' }}</span>
-                <span v-if="tx.mode === 'DEBIT'" class="text-sm sm:text-base md:text-xl font-medium">{{ tx.receiverName
+                <span v-if="tx.mode === 'DEBIT'" class="text-sm sm:text-sm font-medium">{{ tx.receiverName
                   || 'Unknown' }}</span>
               </p>
             </div>
@@ -161,8 +161,6 @@ const props = defineProps({
     default: () => ({})
   }
 })
-
-// Proper reactive references
 const transactionList = ref([])
 const pagination = ref(null)
 const loading = ref(false)
@@ -195,26 +193,42 @@ function formatDate(dateObj) {
   } else {
     date = new Date(dateObj)
   }
-
   const now = new Date()
-  const diffTime = Math.abs(now - date)
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+  const today = new Date(now.toLocaleDateString("en-US", { timeZone: "Africa/Lagos" }))
+  const transactionDate = new Date(date.toLocaleDateString("en-US", { timeZone: "Africa/Lagos" }))
+  const diffTime = today.getTime() - transactionDate.getTime()
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
 
-  if (diffDays === 1) {
-    return 'Yesterday at ' + date.toLocaleTimeString([], {
+  const formatOptions = { timeZone: 'Africa/Lagos' }
+
+  if (diffDays === 0) {
+    return 'Today at ' + date.toLocaleTimeString([], {
+      ...formatOptions,
       hour: '2-digit',
       minute: '2-digit'
     })
-  } else if (diffDays < 7) {
-    return date.toLocaleDateString([], { weekday: 'short' }) + ' at ' + date.toLocaleTimeString([], {
+  } else if (diffDays === 1) {
+    return 'Yesterday at ' + date.toLocaleTimeString([], {
+      ...formatOptions,
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  } else if (diffDays < 7 && diffDays > 0) {
+    return date.toLocaleDateString([], {
+      ...formatOptions,
+      weekday: 'short'
+    }) + ' at ' + date.toLocaleTimeString([], {
+      ...formatOptions,
       hour: '2-digit',
       minute: '2-digit'
     })
   } else {
     return date.toLocaleDateString([], {
+      ...formatOptions,
       month: 'short',
       day: 'numeric'
     }) + ' at ' + date.toLocaleTimeString([], {
+      ...formatOptions,
       hour: '2-digit',
       minute: '2-digit'
     })

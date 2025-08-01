@@ -31,14 +31,18 @@
               <div v-if="openDropdownId === s.id"
                 class="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-10">
                 <div class="flex flex-col gap-1 p-2">
-                  <p v-if="s.status !== 'closed'" class="text-black text-sm cursor-pointer" @click="openDeposit(s)">
+                  <p v-if="s.status !== 'closed' && s.status !== 'completed'" class="text-black text-sm cursor-pointer"
+                    @click="openDeposit(s)">
                     Deposit</p>
-                  <p v-if="s.status !== 'closed'" class="text-black text-sm cursor-pointer" @click="openAutoCharge(s)">
+                  <p v-if="s.status !== 'closed' && s.status !== 'completed'" class="text-black text-sm cursor-pointer"
+                    @click="openAutoCharge(s)">
                     Auto Deposit</p>
                   <p v-if="s.status !== 'closed'" class="text-black text-sm cursor-pointer" @click="openWithdraw(s)">
                     Withdraw Savings</p>
-                  <p v-if="s.status !== 'closed'" class="text-black text-sm cursor-pointer" @click="closeSavings(s)"
-                    :disabled="s.status === 'closed'">Close</p>
+                  <p v-if="s.status !== 'closed' && s.status !== 'completed'" class="text-black text-sm cursor-pointer"
+                    @click="closeSavings(s)" :disabled="closeLoading">
+                    {{ closeLoading ? 'Closing...' : 'Close' }}
+                  </p>
 
                   <p class="text-red-600 text-sm cursor-pointer" @click="openDeleteConfirm(s)">Delete</p>
                 </div>
@@ -63,7 +67,7 @@
               </div>
               <div class="flex gap-2 mt-4">
                 <button type="button" class="px-4 py-2 rounded bg-gray-200 text-black hover:bg-gray-300 w-full"
-                  @click="showCreate = false">Cancel</button>
+                  @click="showCreate = false" :disabled="loadingCreate">Cancel</button>
                 <button type="submit" class="px-4 py-2 rounded bg-black text-white w-full" :disabled="loadingCreate">{{
                   loadingCreate ? 'Creating...' : 'Create' }}</button>
               </div>
@@ -80,12 +84,14 @@
               <div class="mb-3">
                 <label class="block text-sm mb-1">Amount</label>
                 <input v-model.number="depositAmount" type="number" min="1" class="border rounded px-2 py-1 w-full"
-                  required />
+                  required :disabled="depositLoading" />
               </div>
               <div class="flex gap-2 mt-4">
                 <button type="button" class="px-4 py-2 rounded bg-gray-200 text-black hover:bg-gray-300 w-full"
-                  @click="showDeposit = false">Cancel</button>
-                <button type="submit" class="px-4 py-2 rounded bg-black text-white w-full">Deposit</button>
+                  @click="showDeposit = false" :disabled="depositLoading">Cancel</button>
+                <button type="submit" class="px-4 py-2 rounded bg-black text-white w-full" :disabled="depositLoading">
+                  {{ depositLoading ? 'Depositing...' : 'Deposit' }}
+                </button>
               </div>
               <p v-if="depositError" class="text-red-600 text-center mt-2">{{ depositError }}</p>
             </form>
@@ -100,12 +106,14 @@
               <div class="mb-3">
                 <label class="block text-sm mb-1">Amount</label>
                 <input v-model.number="withdrawAmount" type="number" min="1" class="border rounded px-2 py-1 w-full"
-                  required />
+                  required :disabled="withdrawLoading" />
               </div>
               <div class="flex gap-2 mt-4">
                 <button type="button" class="px-4 py-2 rounded bg-gray-200 text-black hover:bg-gray-300 w-full"
-                  @click="showWithdraw = false">Cancel</button>
-                <button type="submit" class="px-4 py-2 rounded bg-black text-white w-full">Withdraw</button>
+                  @click="showWithdraw = false" :disabled="withdrawLoading">Cancel</button>
+                <button type="submit" class="px-4 py-2 rounded bg-black text-white w-full" :disabled="withdrawLoading">
+                  {{ withdrawLoading ? 'Withdrawing...' : 'Withdraw' }}
+                </button>
               </div>
               <p v-if="withdrawError" class="text-red-600 text-center mt-2">{{ withdrawError }}</p>
             </form>
@@ -120,16 +128,16 @@
               <div class="mb-3">
                 <label class="block text-sm mb-1">Amount per charge</label>
                 <input v-model.number="autoChargeAmount" type="number" min="1" class="border rounded px-2 py-1 w-full"
-                  required />
+                  required :disabled="autoChargeLoading" />
               </div>
               <div class="mb-3">
                 <label class="block text-sm mb-1">Interval (minutes)</label>
                 <input v-model.number="autoChargeInterval" type="number" min="1" class="border rounded px-2 py-1 w-full"
-                  required />
+                  required :disabled="autoChargeLoading" />
               </div>
               <div class="flex gap-2 mt-4">
                 <button type="button" class="px-4 py-2 rounded bg-gray-200 text-black hover:bg-gray-300 w-full"
-                  @click="showAutoCharge = false">
+                  @click="showAutoCharge = false" :disabled="autoChargeLoading">
                   Cancel
                 </button>
                 <button type="submit" class="px-4 py-2 rounded bg-black text-white w-full"
@@ -157,7 +165,7 @@
                 {{ deleteLoading ? 'Deleting...' : 'Delete' }}
               </button>
               <button @click="showDeleteConfirm = false"
-                class="px-4 py-2 rounded bg-gray-200 text-black hover:bg-gray-300 w-full">
+                class="px-4 py-2 rounded bg-gray-200 text-black hover:bg-gray-300 w-full" :disabled="deleteLoading">
                 Cancel
               </button>
             </div>
@@ -189,19 +197,24 @@ const createError = ref('')
 const showDeposit = ref(false)
 const depositAmount = ref(0)
 const depositError = ref('')
+const depositLoading = ref(false)
 
 const showWithdraw = ref(false)
 const withdrawAmount = ref(0)
 const withdrawError = ref('')
+const withdrawLoading = ref(false)
 
 const showAutoCharge = ref(false)
 const autoChargeAmount = ref(0)
 const autoChargeInterval = ref(1)
 const autoChargeError = ref('')
 const autoChargeLoading = ref(false)
+
 const showDeleteConfirm = ref(false)
 const deleteLoading = ref(false)
 const deleteError = ref('')
+
+const closeLoading = ref(false)
 
 const selectedSavings = ref(null)
 const isSidebarOpen = ref(false)
@@ -226,6 +239,7 @@ onMounted(() => {
     }
   })
 })
+
 async function fetchSavings() {
   loading.value = true
   error.value = ''
@@ -261,11 +275,14 @@ function openDeposit(s) {
   selectedSavings.value = s
   depositAmount.value = 0
   depositError.value = ''
+  depositLoading.value = false
   showDeposit.value = true
   openDropdownId.value = null
 }
+
 async function handleDeposit() {
   depositError.value = ''
+  depositLoading.value = true
   try {
     const token = Cookies.get('authToken')
     await api.post(`/api/savings/${selectedSavings.value.id}/deposit`, { amount: depositAmount.value }, { headers: { Authorization: `Bearer ${token}` } })
@@ -273,6 +290,8 @@ async function handleDeposit() {
     fetchSavings()
   } catch (err) {
     depositError.value = err.response?.data?.error || 'Failed to deposit.'
+  } finally {
+    depositLoading.value = false
   }
 }
 
@@ -280,11 +299,14 @@ function openWithdraw(s) {
   selectedSavings.value = s
   withdrawAmount.value = 0
   withdrawError.value = ''
+  withdrawLoading.value = false
   showWithdraw.value = true
   openDropdownId.value = null
 }
+
 async function handleWithdraw() {
   withdrawError.value = ''
+  withdrawLoading.value = true
   try {
     const token = Cookies.get('authToken')
     await api.post(`/api/savings/${selectedSavings.value.id}/withdraw`, { amount: withdrawAmount.value }, { headers: { Authorization: `Bearer ${token}` } })
@@ -292,10 +314,13 @@ async function handleWithdraw() {
     fetchSavings()
   } catch (err) {
     withdrawError.value = err.response?.data?.error || 'Failed to withdraw.'
+  } finally {
+    withdrawLoading.value = false
   }
 }
 
 async function closeSavings(s) {
+  closeLoading.value = true
   try {
     const token = Cookies.get('authToken')
     await api.patch(`/api/savings/${s.id}/close`, {}, { headers: { Authorization: `Bearer ${token}` } })
@@ -303,6 +328,7 @@ async function closeSavings(s) {
   } catch (err) {
     alert(err.response?.data?.error || 'Failed to close savings.')
   } finally {
+    closeLoading.value = false
     openDropdownId.value = null
   }
 }
@@ -312,6 +338,7 @@ function openAutoCharge(s) {
   autoChargeAmount.value = s.autoChargeAmount || 0
   autoChargeInterval.value = s.autoChargeInterval || 1
   autoChargeError.value = ''
+  autoChargeLoading.value = false
   showAutoCharge.value = true
   openDropdownId.value = null
 }
@@ -356,7 +383,9 @@ async function disableAutoCharge() {
 function openDeleteConfirm(s) {
   selectedSavings.value = s
   deleteError.value = ''
+  deleteLoading.value = false
   showDeleteConfirm.value = true
+  openDropdownId.value = null
 }
 
 async function handleDeleteSavings() {

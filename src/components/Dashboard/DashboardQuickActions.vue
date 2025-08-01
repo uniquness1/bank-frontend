@@ -268,9 +268,7 @@ const depositDesc = ref('')
 const depositMsg = ref('')
 const depositSuccess = ref(false)
 
-// Define your bank name - update this to match your actual bank
-const MY_BANK_NAME = 'Banka' // Change this to your actual bank name
-
+const MY_BANK_NAME = 'Banka'
 const isAccountNumberValid = computed(() => /^\d{10}$/.test(transferAccount.value))
 const isTransferAmountValid = computed(() => transferAmount.value >= 100)
 const isDepositAmountValid = computed(() => depositAmount.value >= 100)
@@ -525,7 +523,6 @@ const handleTransfer = async () => {
     })
     toast.success(data?.message || 'Transfer successful!')
     emit('transaction-completed')
-    // Emit global transaction event to refresh all transaction lists
     emitTransactionCompleted({
       type: 'transfer',
       amount: transferAmount.value,
