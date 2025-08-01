@@ -150,6 +150,9 @@ import { useTransactions } from '@/composables/useTransactions'
 import { useTransactionEvents } from '@/composables/useTransactionEvents'
 import { useRouter } from 'vue-router'
 import jsPDF from 'jspdf'
+import { useUserStore } from '@/stores/user'
+const userStore = useUserStore()
+const UserDetails = computed(() => userStore.profile || {})
 
 const props = defineProps({
   limit: {
