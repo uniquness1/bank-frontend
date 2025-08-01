@@ -2,8 +2,8 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 
 const api = axios.create({
-  // baseURL: 'https://bank-backend-dhju.onrender.com',
-  baseURL: 'http://localhost:3000',
+  baseURL: 'https://bank-backend-dhju.onrender.com',
+  // baseURL: 'http://localhost:3000',
   withCredentials: true,
 })
 
