@@ -1,5 +1,5 @@
 <template>
-    <section class="flex h-screen border-nonew-full">
+    <section class="flex h-screen border-nonew-full mb-20 md:mb-0">
         <Sidebar :isSidebarOpen="isSidebarOpen" @closeSidebar="closeSidebar" />
         <div class="flex-1 overflow-y-auto">
             <DashboardProfile class="py-4 mx-4" />

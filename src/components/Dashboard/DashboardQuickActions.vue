@@ -2,15 +2,15 @@
   <section class="rounded-lg flex flex-col gap-2">
     <div class="flex items-center gap-2">
       <button
-        class="max-w-[200px] w-full py-2 px-4 rounded-md bg-black text-white border border-gray-300 text-center cursor-pointer hover:bg-gray-800 transition-colors flex items-center gap-2 justify-center"
+        class="max-w-[200px] w-full py-2 px-3 sm:px-4 rounded-md bg-black text-white border border-gray-300 text-center cursor-pointer hover:bg-gray-800 transition-colors flex items-center gap-2 justify-center"
         @click="showTransfer = true"> <i
           class="fas fa-arrow-up bg-white rounded-full px-1.5 py-1 text-xs text-[#121212]"></i>
         <span>Transfer</span></button>
       <button
-        class="max-w-[200px] w-full py-2 px-4 rounded-md bg-black text-white border border-gray-300 text-center cursor-pointer hover:bg-gray-800 transition-colors flex items-center gap-2 justify-center"
+        class="max-w-[200px] w-full py-2 px-3 sm:px-4 rounded-md bg-black text-white border border-gray-300 text-center cursor-pointer hover:bg-gray-800 transition-colors flex items-center gap-2 justify-center"
         @click="showDeposit = true">
         <i class="fas fa-plus bg-white rounded-full p-1 text-xs text-[#121212]"></i>
-        <span>Add Money</span></button>
+        <span>Deposit</span></button>
     </div>
 
     <!-- Transfer Modal -->

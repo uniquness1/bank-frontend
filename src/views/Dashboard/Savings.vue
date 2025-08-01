@@ -1,5 +1,5 @@
 <template>
-  <section class="flex h-screen">
+  <section class="flex h-screen mb-20 md:mb-0">
     <Sidebar :isSidebarOpen="isSidebarOpen" @closeSidebar="closeSidebar" />
     <div class="flex-1 flex flex-col min-h-0 px-4 py-10">
       <div class="flex-1 overflow-y-auto max-w-5xl w-full">

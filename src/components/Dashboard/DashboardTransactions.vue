@@ -1,7 +1,7 @@
 <template>
-  <section class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 md:p-6">
+  <section class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 md:p-6 mb-20">
     <div class="flex items-center justify-between mb-6">
-      <h2 class="text-xl font-semibold text-gray-900">Recent Transactions</h2>
+      <h2 class="text-base sm:text-xl font-semibold text-gray-900">Recent Transactions</h2>
       <router-link v-if="limit" to="/transactions" class="text-sm text-blue-600 hover:text-blue-700 font-medium">View
         More</router-link>
     </div>
@@ -52,19 +52,21 @@
               </svg>
             </div>
             <div>
-              <h4 class="font-normal md:font-medium text-gray-900">
+              <h4 class="text-xs sm:text-base md:text-xl font-normal md:font-medium text-gray-900">
                 {{ tx.mode === 'CREDIT' ? 'Money Received' : 'Money Sent' }}
               </h4>
               <p class="text-sm text-gray-600">
                 {{ tx.mode === 'CREDIT' ? 'From:' : 'To:' }}
-                <span v-if="tx.mode === 'CREDIT'" class="font-medium">{{ tx.senderName || 'Unknown' }}</span>
-                <span v-if="tx.mode === 'DEBIT'" class="font-medium">{{ tx.receiverName || 'Unknown' }}</span>
+                <span class="text-xs sm:text-base md:text-xl font-medium" v-if="tx.mode === 'CREDIT'">{{
+                  tx.senderName || 'Unknown' }}</span>
+                <span v-if="tx.mode === 'DEBIT'" class="text-sm sm:text-base md:text-xl font-medium">{{ tx.receiverName
+                  || 'Unknown' }}</span>
               </p>
             </div>
           </div>
           <div class="text-right">
             <p :class="[
-              'text-base md:text-lg font-semibold',
+              'text-xs sm:text-base md:text-lg font-semibold',
               tx.mode === 'CREDIT' ? 'text-green-600' : 'text-red-600'
             ]">
               {{ tx.mode === 'CREDIT' ? '+' : '-' }}₦{{ formatAmount(tx.amount) }}
@@ -89,8 +91,8 @@
     </div>
 
     <!-- Pagination -->
-    <div v-if="pagination && pagination.totalPages > 1" class="mt-6 pt-6 border-t border-gray-200">
-      <div class="flex items-center justify-between text-sm text-gray-600">
+    <div v-if="pagination && pagination.totalPages > 1 && !limit" class="mt-6 pt-6 border-t border-gray-200">
+      <div class="flex flex-col-reverse md:flex-row gap-4 md:gap-0 items-center justify-between text-sm text-gray-600">
         <p>
           Showing {{ ((pagination.currentPage - 1) * (pagination.limit || 20)) + 1 }} to
           {{ Math.min(pagination.currentPage * (pagination.limit || 20), pagination.totalTransactions) }}

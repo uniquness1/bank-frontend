@@ -66,6 +66,9 @@
                 <router-link to="/profile" class="flex flex-col items-center text-gray-600 hover:text-[#072050]">
                     <i class="fas fa-user text-black text-3xl"></i>
                 </router-link>
+                <router-link to="/Settings" class="flex flex-col items-center text-gray-600 hover:text-[#072050]">
+                    <i class="fas fa-gear text-black text-3xl"></i>
+                </router-link>
             </div>
         </div>
     </section>
